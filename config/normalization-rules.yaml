@@ -1,0 +1,148 @@
+# SubscriptionMaster 정규화 규칙
+# 생성일: 2025-01-27
+# 버전: 1.0.0
+
+# 정규화 규칙 버전
+ruleset_version: "1.0.0"
+last_updated: "2025-01-27"
+
+# 정규화 규칙
+canonical:
+  - key: "Netflix"
+    synonyms:
+      - "NETFLIX.COM"
+      - "NETFLIX*"
+      - "Netflix KR"
+      - "NETFLIX"
+      - "Netflix.com"
+    category: "OTT"
+    cancel_url: "https://www.netflix.com/cancelplan"
+    website: "https://www.netflix.com"
+    
+  - key: "Spotify"
+    synonyms:
+      - "SPOTIFYABONNEMANG"
+      - "SPOTIFY*PREMIUM"
+      - "SPOTIFY"
+      - "Spotify AB"
+      - "SPOTIFY.COM"
+    category: "Music"
+    cancel_url: "https://www.spotify.com/account/subscription/"
+    website: "https://www.spotify.com"
+    
+  - key: "YouTube Premium"
+    synonyms:
+      - "GOOGLE *YOUTUBE"
+      - "YOUTUBE PREMIUM"
+      - "GOOGLE YOUTUBE"
+      - "YOUTUBE"
+      - "GOOGLE*YOUTUBE"
+    category: "OTT"
+    cancel_url: "https://www.youtube.com/premium"
+    website: "https://www.youtube.com/premium"
+    
+  - key: "Notion"
+    synonyms:
+      - "NOTION LABS"
+      - "NOTION*"
+      - "NOTION"
+      - "Notion Labs Inc"
+      - "NOTION.COM"
+    category: "Productivity"
+    cancel_url: "https://www.notion.so/help/cancel-subscription"
+    website: "https://www.notion.so"
+    
+  - key: "Figma"
+    synonyms:
+      - "FIGMA INC"
+      - "FIGMA*"
+      - "FIGMA"
+      - "Figma Inc"
+      - "FIGMA.COM"
+    category: "Design"
+    cancel_url: "https://www.figma.com/help/account-billing/"
+    website: "https://www.figma.com"
+    
+  - key: "Discord"
+    synonyms:
+      - "DISCORD"
+      - "DISCORD.COM"
+      - "Discord Inc"
+      - "DISCORD INC"
+    category: "Communication"
+    cancel_url: "https://support.discord.com/hc/en-us/articles/360017704752"
+    website: "https://discord.com"
+    
+  - key: "GitHub"
+    synonyms:
+      - "GITHUB"
+      - "GITHUB.COM"
+      - "GitHub Inc"
+      - "GITHUB INC"
+    category: "Development"
+    cancel_url: "https://docs.github.com/en/billing/managing-billing-for-your-github-account/canceling-a-github-marketplace-app"
+    website: "https://github.com"
+
+# 중복 탐지 규칙
+rules:
+  duplicate:
+    window_days: 35
+    price_tolerance: 0.10
+    min_amount: 1000  # 최소 금액 (원)
+    
+  ghost:
+    criteria:
+      - no_login_days: 60
+      - no_usage_days: 90
+      - price_threshold: 5000  # 최소 가격 (원)
+      
+  price_increase:
+    min_delta_pct: 0.15
+    lookback_months: 6
+    min_amount_change: 1000  # 최소 금액 변화 (원)
+    
+  trial:
+    notify_days_before: 3
+    min_trial_duration: 7  # 최소 트라이얼 기간 (일)
+    max_trial_duration: 30  # 최대 트라이얼 기간 (일)
+
+# 카테고리별 임계값
+category_thresholds:
+  OTT:
+    duplicate_window: 30
+    price_tolerance: 0.05
+  Music:
+    duplicate_window: 35
+    price_tolerance: 0.10
+  Productivity:
+    duplicate_window: 40
+    price_tolerance: 0.15
+  Design:
+    duplicate_window: 45
+    price_tolerance: 0.20
+  Communication:
+    duplicate_window: 30
+    price_tolerance: 0.10
+  Development:
+    duplicate_window: 50
+    price_tolerance: 0.25
+
+# 머천트별 특별 규칙
+merchant_specific:
+  - merchant: "Netflix"
+    rules:
+      - no_duplicate: true
+      - price_monitoring: true
+      - trial_detection: false
+      
+  - merchant: "Spotify"
+    rules:
+      - no_duplicate: true
+      - price_monitoring: true
+      - trial_detection: true
+      
+  - merchant: "YouTube Premium"
+    rules:
+      - no_duplicate: false  # 가족 계정 허용
+      - price_monitoring: true
+      - trial_detection: true
