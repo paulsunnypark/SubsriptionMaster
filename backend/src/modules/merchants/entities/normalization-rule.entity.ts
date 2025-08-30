@@ -17,7 +17,7 @@ export class NormalizationRule {
   id: string;
 
   @ApiProperty({ description: '정규화된 머천트명', example: 'Netflix' })
-  @Column()
+  @Column({ nullable: true })
   canonical_name: string;
 
   @ApiProperty({ description: '동의어 목록', example: ['NETFLIX.COM', 'NETFLIX*'] })

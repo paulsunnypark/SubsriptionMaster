@@ -53,10 +53,10 @@ export class AuthService {
     };
   }
 
-  async login(loginDto: LoginDto, ipAddress?: string, userAgent?: string) {
-    // 사용자 찾기
-    const user = await this.usersService.findByEmail(loginDto.email);
-    if (!user) {
+  async login(loginDto: LoginDto, ipAddress: string, userAgent: string) {
+    // 사용자 조회 (비밀번호 포함)
+    const user = await this.usersService.findByEmailWithPassword(loginDto.email);
+    if (!user || !user.is_active) {
       throw new UnauthorizedException('이메일 또는 비밀번호가 올바르지 않습니다.');
     }
 
@@ -181,5 +181,14 @@ export class AuthService {
 
   private async invalidateUserSessions(userId: string) {
     await this.authSessionRepository.delete({ user_id: userId });
+  }
+
+  // 토큰 페이로드의 sub(사용자 ID)로 사용자 조회
+  async getUserById(userId: string): Promise<User | null> {
+    const user = await this.usersService.findOne(userId);
+    if (!user) {
+      return null;
+    }
+    return user;
   }
 }

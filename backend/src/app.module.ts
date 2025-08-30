@@ -26,7 +26,8 @@ import { HealthModule } from '@/modules/health/health.module';
     // 설정 모듈
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env', '.env.local'],
+      // Load both backend-local and repo-root .env files (dev convenience)
+      envFilePath: ['.env', '.env.local', '../.env', '../.env.local'],
     }),
 
     // 데이터베이스 모듈

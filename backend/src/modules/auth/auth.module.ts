@@ -17,7 +17,8 @@ import { UsersModule } from '@/modules/users/users.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get('JWT_SECRET'),
+        // Provide a safe dev default to avoid startup crash when .env is missing
+        secret: config.get('JWT_SECRET', 'your-super-secret-jwt-key'),
         signOptions: {
           expiresIn: config.get('JWT_EXPIRES_IN', '15m'),
         },

@@ -13,13 +13,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('JWT_SECRET'),
+      // Use the same default as CommonModule/AuthModule to keep signing/verifying consistent in dev
+      secretOrKey: configService.get('JWT_SECRET', 'your-super-secret-jwt-key'),
     });
   }
 
   async validate(payload: any) {
     try {
-      const user = await this.authService.validateToken(payload.sub);
+      const user = await this.authService.getUserById(payload.sub);
+      if (!user || (user as any).is_active === false) {
+        throw new UnauthorizedException('유효하지 않은 사용자입니다.');
+      }
       return user;
     } catch (error) {
       throw new UnauthorizedException('유효하지 않은 토큰입니다.');

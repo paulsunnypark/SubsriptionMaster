@@ -32,15 +32,11 @@ export class UsersService {
     });
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { id },
       relations: ['subscriptions', 'transactions', 'alerts', 'savings'],
     });
-
-    if (!user) {
-      throw new NotFoundException('사용자를 찾을 수 없습니다.');
-    }
 
     return user;
   }
@@ -49,6 +45,13 @@ export class UsersService {
     return await this.userRepository.findOne({
       where: { email: email.toLowerCase() },
       relations: ['subscriptions', 'transactions', 'alerts', 'savings'],
+    });
+  }
+
+  async findByEmailWithPassword(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { email: email.toLowerCase() },
+      select: ['id', 'email', 'password', 'name', 'timezone', 'is_active', 'email_verified', 'last_login_at', 'created_at', 'updated_at'],
     });
   }
 
